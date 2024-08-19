@@ -3,17 +3,6 @@ from model import stream_gemini_response
 from markdown_pdf import MarkdownPdf, Section
 import PyPDF2
 
-def check_required_info(response):
-    required_fields = [
-        "Client Information",
-        "Projected IELTS Score",
-        "Required Minimum IELTS Scores",
-        "Recommended Pathways",
-        "Recommended NOC",
-        "Additional Information",
-        "Timelines"
-    ]
-    return all(field in response for field in required_fields)
 
 def extract_text_from_pdf(pdf_path):
     with open(pdf_path, 'rb') as file:
@@ -24,7 +13,13 @@ def extract_text_from_pdf(pdf_path):
     return text
 
 @cl.on_chat_start
-def start_chat():
+
+async def on_chat_start():
+    text = """
+Hey there!
+ I am paddi for travel Agents, I can help you with anything relating to visa roadmaps
+"""
+    await cl.Message(content=text).send()
     cl.user_session.set(
         "message_history",
         [{"role": "system", "content": "You are a helpful assistant."}],
@@ -55,6 +50,7 @@ async def main(message: cl.Message):
         response += chunk
     await msg.send()
     
+
     message_history.append({"role": "assistant", "content": msg.content})
     await msg.update()
     
@@ -62,5 +58,6 @@ async def main(message: cl.Message):
     pdf.add_section(Section(response, toc=False))
     pdf.save('output2.pdf')
     
-    if check_required_info(response):
+    
+    if "ROADMAP" in response:
         await cl.Message(content="Download pdf", elements=[cl.File(name="Road_Map.pdf", path="output2.pdf")], author="Tommy").send()

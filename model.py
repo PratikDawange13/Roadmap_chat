@@ -7,11 +7,11 @@ import json
 import os
 from dotenv import load_dotenv
 load_dotenv()
-
+from vertexai.generative_models import GenerativeModel, GenerationConfig, Part, Content
 
 generation_config = {
-    "max_output_tokens": 700,
-    "temperature": 0.5,
+    "max_output_tokens": 1000,
+    "temperature": 0.3,
     "top_p": 1,
 }
 
@@ -36,16 +36,45 @@ credentials = service_account.Credentials.from_service_account_info(key_dict)
 vertexai.init(project=project_id, location=location,credentials=credentials)
 
 model = GenerativeModel(model_name=f"projects/{project_id}/locations/us-central1/endpoints/1995074843715829760",
-                         system_instruction=[system_prompt])
+                         )
+context = [
+        Content(role='user', parts=[
+        Part.from_text(system_prompt),
+    ]),
+        Content(role='model', parts=[
+        Part.from_text('Understood')
+])
+]
 
-chat = model.start_chat()
+history ={"contents":[
+    {
+        "role": "user",
+        "parts": [
+    {
+        "text": system_prompt
+    }
+]
+},
+    {
+        "role": "model",
+        "parts": [
+{
+        "text": "Understood"
+    }
+    ]
+    }
+]
+}
+#history = [{'role': 'user', 'content': [f'{system_prompt}']},
+ #           {'role': 'model', 'content': ["Understood"]}]
+chat = model.start_chat(history=context)
 
 
 #def multiturn_generate_content(input_message):
     #response = chat.send_message(content=input_message,generation_config=generation_config, safety_settings=safety_settings)
     #return response.text        
 async def stream_gemini_response(input_message):
-    response = chat.send_message(content=input_message,generation_config=generation_config, safety_settings=safety_settings)
+    response = chat.send_message(content=input_message,generation_config=generation_config, safety_settings=safety_settings,)
     for chunk in response.text:
         if chunk:
             yield chunk
