@@ -67,7 +67,7 @@ history ={"contents":[
 }
 #history = [{'role': 'user', 'content': [f'{system_prompt}']},
  #           {'role': 'model', 'content': ["Understood"]}]
-chat = model.start_chat(history=context)
+chat = model.start_chat(history=context, response_validation= False)
 
 
 #def multiturn_generate_content(input_message):
