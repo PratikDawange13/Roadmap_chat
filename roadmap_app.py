@@ -2,7 +2,7 @@ import chainlit as cl
 from model import stream_gemini_response
 from markdown_pdf import MarkdownPdf, Section
 import PyPDF2
-
+import docx
 
 def extract_text_from_pdf(pdf_path):
     with open(pdf_path, 'rb') as file:
@@ -11,6 +11,11 @@ def extract_text_from_pdf(pdf_path):
         for page in reader.pages:
             text += page.extract_text()
     return text
+
+def extract_text_from_doc(file_path):
+    doc = docx.Document(file_path)
+    return " ".join([paragraph.text for paragraph in doc.paragraphs])
+
 
 @cl.on_chat_start
 
@@ -35,8 +40,12 @@ async def main(message: cl.Message):
         if file_path.lower().endswith('.pdf'):
             file_content = extract_text_from_pdf(file_path)
             message_content = file_content
+            
+        elif file_path.lower().endswith('.docx'):
+            file_content = extract_text_from_doc(file_path)
+            message_content = file_content
         else:
-            await cl.Message(content="Unsupported file type. Please attach a .pdf file.").send()
+            await cl.Message(content="Unsupported file type. Please attach a .pdf or .docx file.").send()
             return
     else:
         message_content = message.content

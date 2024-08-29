@@ -10,7 +10,7 @@
 version: '3.7'
 services:
   myapp:
-    image: rdmchatbot_11
+    image: rdmchatbot_13
     secrets:
       - my_secret
     ports:

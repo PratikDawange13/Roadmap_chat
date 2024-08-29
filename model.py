@@ -12,7 +12,7 @@ from vertexai.generative_models import GenerativeModel, GenerationConfig, Part, 
 generation_config = {
     "max_output_tokens": 1000,
     "temperature": 0.3,
-    "top_p": 1,
+    "top_p": 0.2,
 }
 
 safety_settings = {
