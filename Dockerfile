@@ -56,4 +56,4 @@ COPY . .
 EXPOSE 3000
 
 # Run the application.
-CMD chainlit run roadmap_app.py --port 3000 --host 0.0.0.0 -w
+CMD chainlit run new_roadmap.py --port 3000 --host 0.0.0.0 -w
